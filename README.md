@@ -1,1 +1,6 @@
-Bài tập lớn nhóm 502
+// danh sách các thư viện
+import javax.swing.*;   //tạo cửa sổ, nút bấm, menu, bảng ,...
+import java.awt.*;     //các công cụ vẽ vd như màu, font ...
+import java.awt.event.*; // nhận các input từ máy tính(chuột, bàn phím)
+import java.util.ArrayList; // danh sách động
+
