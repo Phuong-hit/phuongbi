@@ -1,12 +1,12 @@
 Bài tập lớn game Arkanoid
 Cấu trúc game Arkanoid
-│
-├── ArkanoidGame.java       (class chính, tạo cửa sổ, chạy game loop)
-├── GamePanel.java          (kế thừa JPanel, vẽ game, update game)
-├── Paddle.java             (điều khiển thanh trượt)
-├── Ball.java               (quản lý quả bóng)
-├── Brick.java              (một viên gạch)
-└── BrickManager.java       (quản lý mảng các viên gạch)
+
+ArkanoidGame.java       (class chính, tạo cửa sổ, chạy game loop)
+GamePanel.java          (kế thừa JPanel, vẽ game, update game)
+Paddle.java             (điều khiển thanh trượt)
+Ball.java               (quản lý quả bóng)
+Brick.java              (một viên gạch)
+BrickManager.java       (quản lý mảng các viên gạch)
 
 Các lớp của game
 Lớp ArkanoidGame
