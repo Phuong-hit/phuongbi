@@ -20,7 +20,7 @@ public class GameLoop implements Runnable {
     public GameLoop(GamePanel panel) {
         this.panel = panel;
 
-        // --- KHỞI TẠO CÁC OBJECT MENU VÀ TRẠNG THÁI ---
+        //  KHỞI TẠO CÁC OBJECT MENU VÀ TRẠNG THÁI ---
         this.currentState = GameState.MENU;
         this.mainMenu = new MainMenu(this);
         this.settingMenu = new SettingMenu(this);
