@@ -24,6 +24,10 @@ public class Collision {
         }
     }
 
+    /**
+     * Kiểm tra va chạm giữa bóng và từng viên gạch.
+     * Nếu chạm, phá gạch và đảo hướng Y của bóng.
+     */
     public static int checkBrickCollision(Ball ball, java.util.List<Brick> bricks) {
         int scoreGain = 0;
 
@@ -38,6 +42,10 @@ public class Collision {
         return scoreGain;
     }
 
+    /**
+     * Kiểm tra va chạm tường: trái, phải, trên.
+     * Nếu chạm thì đảo hướng phù hợp.
+     */
     public static void checkWallCollision(Ball ball, int panelWidth, int panelHeight) {
         if (ball.x <= 0 || ball.x + ball.size >= panelWidth) {
             ball.dx = -ball.dx;
@@ -47,6 +55,10 @@ public class Collision {
         }
     }
 
+    /**
+     * Kiểm tra nếu bóng chạm đất (mất mạng).
+     * @return true nếu bóng chạm đáy màn hình.
+     */
     public static boolean isBallLost(Ball ball, int panelHeight) {
         return ball.y + ball.size >= panelHeight;
     }

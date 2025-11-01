@@ -13,22 +13,27 @@ public class GamePanel extends JPanel {
     private Ball ball;
     private Level level;
     private java.util.List<PowerUp> powerUps = new ArrayList<>();
+
     private boolean gameOver;
     private boolean ballStuck;
     private int score;
-    private boolean isFireBall = false;
+
     private GameLoop loop;
+
     private static final int WIDTH = 800;
     private static final int HEIGHT = 600;
+
+    // --- THAY THẾ Listener gốc bằng các đối tượng Adapter để dễ dàng thêm/bỏ ---
     private MouseMotionAdapter gameMouseMotionListener;
     private MouseAdapter gameMouseListener;
-
+    // --------------------------------------------------------------------------
 
     public GamePanel() {
         setPreferredSize(new Dimension(WIDTH, HEIGHT));
         setBackground(Color.BLACK);
-        setFocusable(true);
+        setFocusable(true); // Đảm bảo GamePanel nhận sự kiện
 
+        // Khởi tạo GameLoop ngay lập tức, nhưng không chạy startGame()
         loop = new GameLoop(this);
         new Thread(loop).start();
 
@@ -60,17 +65,19 @@ public class GamePanel extends JPanel {
         };
     }
 
-    // Phương thức để xóa tất cả các Mouse Listener
+    // Phương thức mới để xóa tất cả các Mouse Listener
     public void clearListeners() {
+        // Xóa tất cả MouseListener
         for (MouseListener ml : getMouseListeners()) {
             removeMouseListener(ml);
         }
+        // Xóa tất cả MouseMotionListener
         for (MouseMotionListener mml : getMouseMotionListeners()) {
             removeMouseMotionListener(mml);
         }
     }
 
-    // Phương thức mới để thêm lại Listener cho trạng thái
+    // Phương thức mới để thêm lại Listener cho trạng thái IN_GAME
     public void addGameListeners() {
         addMouseListener(gameMouseListener);
         addMouseMotionListener(gameMouseMotionListener);
@@ -88,22 +95,26 @@ public class GamePanel extends JPanel {
         score = 0;
         gameOver = false;
         ballStuck = true;
-        isFireBall = false; // Reset FireBall status
     }
+
+    // ... (các phương thức và thuộc tính khác)
 
     public void updateGame() {
         if (gameOver) return;
-        paddle.update();
-        boolean hasBounced = false;
 
+        // 1. Cập nhật vị trí Paddle luôn chạy
+        paddle.update();
+
+        // 2. LOGIC CẬP NHẬT VỊ TRÍ BÓNG (PHẦN CẦN SỬA/KIỂM TRA)
         if (ballStuck) {
-            // Cập nhật vị trí bóng DÍNH theo Paddle
+            // BỔ SUNG: Cập nhật vị trí bóng DÍNH theo Paddle
             ball.x = paddle.x + paddle.width / 2 - ball.size / 2;
             ball.y = paddle.y - ball.size;
         } else {
+            // Khi không dính, bóng bắt đầu di chuyển (di chuyển bóng ở đây)
             ball.move();
 
-            //LOGIC VA CHẠM
+            // --- LOGIC VA CHẠM (Chỉ chạy khi bóng đang di chuyển) ---
 
             // Tường
             if (ball.x <= 0 || ball.x + ball.size >= WIDTH) ball.dx = -ball.dx;
@@ -113,63 +124,42 @@ public class GamePanel extends JPanel {
             if (ball.y + ball.size >= HEIGHT) {
                 gameOver = true;
                 System.out.println("GAME OVER - Returning to Menu");
-                return;
+                // Không setGameState ở đây, để user thấy màn hình GAME OVER rồi click về menu.
+                return; // Dừng update khi Game Over
             }
 
             // Paddle
             if (ball.getRect().intersects(paddle.getRect())) {
+                // ... (Logic va chạm Paddle hiện tại của bạn)
                 ball.dy = -Math.abs(ball.dy);
             }
 
             // Bricks
-            Iterator<Brick> brickIterator = level.bricks.iterator();
-            while (brickIterator.hasNext()) {
-                Brick b = brickIterator.next();
-
-                // Chỉ xử lý gạch chưa bị phá
+            for (Brick b : level.bricks) {
                 if (!b.destroyed && ball.getRect().intersects(b.getRect())) {
-
-                    // LOGIC XỬ LÝ FIREBALL & QUYẾT ĐỊNH BẬT NẢY
-                    boolean bounce = true;
-
-                    // Kiểm tra xem gạch có phải là WeakBrick không
-                    if (isFireBall && b instanceof WeakBrick) {
-                        bounce = false; // FireBall xuyên qua gạch yếu
-                    } else if (isFireBall && b instanceof StrongBrick && b.getHealth() > 1) {
-                        bounce = false; // FireBall có thể xuyên qua lần va chạm đầu tiên của StrongBrick
-                        // Giữ bounce = true để bóng bị bật lại khi chạm Unbreakable hoặc StrongBrick đã yếu.
-                    }
-
-                    // Thực hiện va chạm
                     b.hit();
 
-                    // Xử lý điểm và PowerUp
+                    // xác định hướng nảy đúng
+                    double ballCenterX = ball.x + ball.size / 2.0;
+                    double ballCenterY = ball.y + ball.size / 2.0;
+                    double brickCenterX = b.x + b.width / 2.0;
+                    double brickCenterY = b.y + b.height / 2.0;
+                    double dx = Math.abs(ballCenterX - brickCenterX);
+                    double dy = Math.abs(ballCenterY - brickCenterY);
+                    if (dx > dy) ball.dx = -ball.dx;
+                    else ball.dy = -ball.dy;
+
                     if (b.destroyed && !b.isUnbreakable()) {
                         score += 10;
                         PowerUp p = PowerUp.maybeDrop(b.x + b.width / 2, b.y + b.height / 2);
                         if (p != null) powerUps.add(p);
                     }
-
-                    // Xử lý bật nảy
-                    if (bounce && !hasBounced) {
-                        // Xác định hướng nảy
-                        double ballCenterX = ball.x + ball.size / 2.0;
-                        double ballCenterY = ball.y + ball.size / 2.0;
-                        double brickCenterX = b.x + b.width / 2.0;
-                        double brickCenterY = b.y + b.height / 2.0;
-                        double dx = Math.abs(ballCenterX - brickCenterX);
-                        double dy = Math.abs(ballCenterY - brickCenterY);
-
-                        if (dx > dy) ball.dx = -ball.dx;
-                        else ball.dy = -ball.dy;
-
-                        hasBounced = true;
-                    }
+                    break;
                 }
             }
         }
 
-        // PowerUps
+        // PowerUps (Luôn chạy, không phụ thuộc vào ballStuck)
         Iterator<PowerUp> it = powerUps.iterator();
         while (it.hasNext()) {
             PowerUp p = it.next();
@@ -180,30 +170,6 @@ public class GamePanel extends JPanel {
             } else if (p.y > HEIGHT) {
                 it.remove();
             }
-        }
-    }
-
-    private void activatePowerUp(String type) {
-        switch (type) {
-            case "EXTEND_PADDLE":
-                // 1. Kéo dài Paddle
-                paddle.width += 40;
-                // Giới hạn chiều rộng tối đa của paddle để tránh quá lớn
-                if (paddle.width > WIDTH - 50) {
-                    paddle.width = WIDTH - 50;
-                }
-                break;
-
-            case "FIRE_BALL":
-                // 2. Chuyển bóng thành FireBall
-                ball.setColor(Color.ORANGE);
-                isFireBall = true;
-                break;
-
-            case "MULTI_BALL":
-                // 3. Tạo thêm bóng
-                System.out.println("⚡ MULTI BALL: Kích hoạt tạo thêm bóng!");
-                break;
         }
     }
 
@@ -244,5 +210,47 @@ public class GamePanel extends JPanel {
             loop.getSettingMenu().render(g);
         }
     }
+
+    // Trong GamePanel.java
+
+// ... (Các thuộc tính khác)
+
+    // Thêm thuộc tính kiểm soát FireBall
+    private boolean isFireBall = false;
+
+// ... (Các phương thức khác)
+
+    private void activatePowerUp(String type) {
+        switch (type) {
+            case "EXTEND_PADDLE":
+                // 1. Kéo dài Paddle
+                paddle.width += 40;
+                // Giới hạn chiều rộng tối đa của paddle để tránh quá lớn
+                if (paddle.width > WIDTH - 50) {
+                    paddle.width = WIDTH - 50;
+                }
+                break;
+
+            case "FIRE_BALL":
+                // 2. Chuyển bóng thành FireBall
+                ball.setColor(Color.ORANGE);
+                isFireBall = true;
+                break;
+
+            case "MULTI_BALL":
+                // 3. Tạo thêm bóng (cần logic phức tạp hơn, tạm thời chỉ in thông báo)
+                System.out.println("⚡ MULTI BALL: Kích hoạt tạo thêm bóng!");
+                // Thêm logic tạo bóng phụ ở đây, ví dụ:
+                // createNewBall(ball.x, ball.y, -ball.dx, ball.dy);
+                break;
+        }
+    }
+
+// ⚠️ LƯU Ý QUAN TRỌNG: Cần cập nhật logic va chạm gạch để xử lý FireBall
+// Hiện tại, logic va chạm gạch của bạn đang kết thúc bằng 'break;'
+// Logic FireBall phải cho phép bóng xuyên qua gạch yếu (WeakBrick)
+// và chỉ bị bật lại khi chạm StrongBrick hoặc UnbreakableBrick.
+
+    // ... (phần còn lại của GamePanel) ...
 
 }
