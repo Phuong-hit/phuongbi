@@ -39,4 +39,8 @@ public abstract class Brick {
             g.drawRect(x, y, width, height);
         }
     }
+
+    public int getHealth() {
+        return health;
+    }
 }
