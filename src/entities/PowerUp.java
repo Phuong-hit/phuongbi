@@ -16,6 +16,8 @@ public class PowerUp {
             case "MULTI_BALL" -> color = Color.MAGENTA;
             case "FIRE_BALL" -> color = Color.ORANGE;
             case "EXTEND_PADDLE" -> color = Color.GREEN;
+            case "STRONG_BALL" -> color = Color.RED.darker();
+            case "ADD_LIFE" -> color = Color.CYAN;
             default -> color = Color.WHITE;
         }
     }
@@ -23,8 +25,42 @@ public class PowerUp {
     public void move() { y += dy; }
 
     public void draw(Graphics g) {
+        // 1. Vẽ vòng tròn màu nền
         g.setColor(color);
         g.fillOval(x, y, size, size);
+
+        // --- SỬA FONT: Chữ trên PowerUp ---
+        g.setColor(Color.BLACK);
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10)); // Sửa
+
+        String text = "";
+        int offsetX = 0;
+        int offsetY = 14;
+
+        switch (type) {
+            case "FIRE_BALL":
+                text = "F";
+                offsetX = 7;
+                break;
+            case "MULTI_BALL":
+                text = "x2";
+                offsetX = 5;
+                break;
+            case "EXTEND_PADDLE":
+                text = "EX";
+                offsetX = 4;
+                break;
+            case "STRONG_BALL":
+                text = "S";
+                offsetX = 7;
+                break;
+            case "ADD_LIFE":
+                text = "L+";
+                offsetX = 4;
+                break;
+        }
+
+        g.drawString(text, x + offsetX, y + offsetY);
     }
 
     public Rectangle getRect() {
@@ -32,8 +68,8 @@ public class PowerUp {
     }
 
     public static PowerUp maybeDrop(int x, int y) {
-        if (new Random().nextDouble() < 0.2) { // 20% cơ hội rơi ra
-            String[] types = {"MULTI_BALL", "FIRE_BALL", "EXTEND_PADDLE"};
+        if (new Random().nextDouble() < 0.09) {
+            String[] types = {"MULTI_BALL", "FIRE_BALL", "EXTEND_PADDLE", "STRONG_BALL", "ADD_LIFE"};
             String type = types[new Random().nextInt(types.length)];
             return new PowerUp(x, y, type);
         }
