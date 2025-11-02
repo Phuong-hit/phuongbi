@@ -353,4 +353,177 @@ public class GamePanel extends JPanel {
             }
         }
     }
+    @Override
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        if (loop.getCurrentState() == GameState.IN_GAME || loop.getCurrentState() == GameState.PAUSE) {
+            paddle.draw(g);
+            for (Ball b : balls) b.draw(g);
+            level.draw(g);
+            for (PowerUp p : powerUps) p.draw(g);
+            g.setColor(Color.WHITE);
+            g.setFont(new Font(Font.MONOSPACED, Font.BOLD, 18));
+            g.drawString("Score: " + score, 20, 20);
+            g.drawString("Bricks left: " + level.getRemainingBricks(), 20, 40);
+            g.drawString("Lives: " + lives, 20, 60);
+
+            if (powerUpTimer > 0) {
+                long timeElapsed = System.currentTimeMillis() - powerUpTimer;
+                int timeRemaining = (int) ((POWERUP_DURATION - timeElapsed) / 1000);
+                if (timeRemaining <= 3) g.setColor(Color.RED);
+                else g.setColor(Color.GREEN);
+                g.drawString("POWER UP: " + timeRemaining + "s", WIDTH - 150, 30);
+            }
+
+            // Vẽ nút setting
+            if (loop.getCurrentState() == GameState.IN_GAME && !gameWon && !gameOver) {
+                drawSettingsCog(g);
+            }
+            //hướng dẫn bắt đầu game
+            if (ballStuck && !gameOver && !gameWon) {
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 24)); // SANS_SERIF
+                g.setColor(Color.CYAN);
+                g.drawString("CLICK CHUỘT ĐỂ BẮN!", WIDTH / 2 - 120, HEIGHT / 2 + 100);
+            }
+
+            //tbao thắng
+            if (gameWon) {
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 48)); // SANS_SERIF
+                g.setColor(Color.YELLOW);
+                g.drawString("VICTORY!", WIDTH / 2 - 100, HEIGHT / 2);
+
+                Graphics2D g2d = (Graphics2D) g;
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18)); // SANS_SERIF
+
+                g.setColor(Color.GREEN);
+                g2d.fill(replayButton);
+                g.setColor(Color.BLACK);
+                g.drawString("Chơi Lại", replayButton.x + 30, replayButton.y + 32);
+
+                g.setColor(Color.CYAN);
+                g2d.fill(nextLevelButton);
+                g.setColor(Color.BLACK);
+                if (currentLevel < MAX_LEVELS) {
+                    g.drawString("Level Tiếp", nextLevelButton.x + 25, nextLevelButton.y + 32);
+                } else {
+                    g.drawString("Menu", nextLevelButton.x + 45, nextLevelButton.y + 32);
+                }
+            }
+            //game over
+            else if (gameOver) {
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 48)); // SANS_SERIF
+                g.setColor(Color.RED);
+                g.drawString("GAME OVER", WIDTH / 2 - 120, HEIGHT / 2);
+
+                Graphics2D g2d = (Graphics2D) g;
+                g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18)); // SANS_SERIF
+
+                g.setColor(Color.GREEN);
+                g2d.fill(replayButton);
+                g.setColor(Color.BLACK);
+                g.drawString("Chơi Lại", replayButton.x + 30, replayButton.y + 32);
+
+                g.setColor(Color.GRAY);
+                g2d.fill(exitButton);
+                g.setColor(Color.WHITE);
+                g.drawString("Thoát", exitButton.x + 40, exitButton.y + 32);
+            }
+
+            // pause
+            if (loop.getCurrentState() == GameState.PAUSE && !gameWon && !gameOver) {
+                drawPauseMenu(g);
+            }
+        }
+
+        // Vẽ Menu/Setting
+        else if (loop.getCurrentState() == GameState.MENU) {
+            loop.getMainMenu().render(g);
+        } else if (loop.getCurrentState() == GameState.LEVEL_SELECT) {
+            loop.getLevelSelectionMenu().render(g);
+        } else if (loop.getCurrentState() == GameState.SETTING) {
+            loop.getSettingMenu().render(g);
+        }
+    }
+
+    // Phương thức vẽ nút setting
+    private void drawSettingsCog(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g.setColor(Color.DARK_GRAY);
+        g2d.fill(settingsCogButton);
+        g.setColor(Color.WHITE);
+        g.setFont(new Font(Font.DIALOG, Font.BOLD, 30));
+        g.drawString("⚙", settingsCogButton.x + 6, settingsCogButton.y + 30);
+    }
+
+    // Phương thức vẽ Menu Pause
+    private void drawPauseMenu(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g.setColor(new Color(0, 0, 0, 150));
+        g.fillRect(0, 0, WIDTH, HEIGHT);
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 48));
+        g.setColor(Color.WHITE);
+        g.drawString("GAME PAUSED", WIDTH / 2 - 140, HEIGHT / 2 - 150);
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); //
+        g.setColor(Color.GREEN);
+        g2d.fill(pauseResumeButton);
+        g.setColor(Color.BLACK);
+        g.drawString("Tiếp tục (Resume)", pauseResumeButton.x + 30, pauseResumeButton.y + 33);
+
+        boolean isSoundOn = loop.isSoundOn();
+        String muteText = "Âm thanh: " + (isSoundOn ? "BẬT" : "TẮT");
+        g.setColor(isSoundOn ? Color.YELLOW : Color.GRAY);
+        g2d.fill(pauseMuteButton);
+        g.setColor(Color.BLACK);
+        g.drawString(muteText, pauseMuteButton.x + 50, pauseMuteButton.y + 33);
+
+        g.setColor(Color.RED);
+        g2d.fill(pauseMenuButton);
+        g.setColor(Color.WHITE);
+        g.drawString("Về Menu Chính", pauseMenuButton.x + 40, pauseMenuButton.y + 33);
+    }
+
+    // Kích hoạt PowerUp
+    private void activatePowerUp(String type) {
+        if (!type.equals("ADD_LIFE") && !type.equals("MULTI_BALL")) {
+            powerUpTimer = System.currentTimeMillis();
+        }
+
+        switch (type) {
+            case "EXTEND_PADDLE":
+                if (extendCount < 3) {
+                    int increment = (int) (BASE_PADDLE_WIDTH * 0.20);
+                    paddle.width += increment;
+                    extendCount++;
+                }
+                break;
+            case "FIRE_BALL":
+                isFireBall = true;
+                isStrongBall = false;
+                for (Ball b : balls) {
+                    b.setColor(Color.RED); // Bóng đỏ
+                }
+                break;
+            case "STRONG_BALL":
+                isStrongBall = true;
+                if (!isFireBall) {
+                    for (Ball b : balls) {
+                        b.setColor(Color.RED.darker());
+                    }
+                }
+                break;
+            case "MULTI_BALL":
+                java.util.List<Ball> newBalls = new ArrayList<>();
+                for (Ball b : balls) {
+                    Ball newBall = new Ball(b.x, b.y, b.size, b.getColor());
+                    newBall.setDirection(-b.dx, b.dy);
+                    newBalls.add(newBall);
+                }
+                balls.addAll(newBalls);
+                break;
+            case "ADD_LIFE":
+                lives++;
+                break;
+        }
+    }
 }

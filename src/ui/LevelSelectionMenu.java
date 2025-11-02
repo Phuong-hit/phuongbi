@@ -10,73 +10,60 @@ public class LevelSelectionMenu extends MouseAdapter {
 
     private GameLoop gameLoop;
 
-    // Vị trí và kích thước các nút Level
-    private Rectangle level1Button = new Rectangle(300, 150, 200, 50);
-    private Rectangle level2Button = new Rectangle(300, 220, 200, 50);
-    private Rectangle level3Button = new Rectangle(300, 290, 200, 50);
-    private Rectangle backButton   = new Rectangle(300, 400, 200, 50);
+    private Rectangle level1Button = new Rectangle(250, 150, 300, 50);
+    private Rectangle level2Button = new Rectangle(250, 210, 300, 50);
+    private Rectangle level3Button = new Rectangle(250, 270, 300, 50);
+    private Rectangle level4Button = new Rectangle(250, 330, 300, 50);
+    private Rectangle level5Button = new Rectangle(250, 390, 300, 50);
+    private Rectangle backButton = new Rectangle(250, 480, 300, 50);
 
     public LevelSelectionMenu(GameLoop gameLoop) {
         this.gameLoop = gameLoop;
     }
 
-
     public void render(Graphics g) {
-        // background
-        g.setColor(new Color(30, 30, 60));
+        g.setColor(new Color(20, 20, 50));
         g.fillRect(0, 0, 800, 600);
 
-        // title
         g.setColor(Color.WHITE);
-        g.setFont(new Font("Arial", Font.BOLD, 40));
-        FontMetrics titleFm = g.getFontMetrics();
-        String title = "CHỌN LEVEL";
-        int titleX = (800 - titleFm.stringWidth(title)) / 2;
-        int titleY = 80;
-        g.drawString(title, titleX, titleY);
+        // --- SỬA FONT: Tiêu đề ---
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 48)); // Sửa
+        g.drawString("CHỌN LEVEL", 270, 80);
 
         Graphics2D g2d = (Graphics2D) g;
+        // --- SỬA FONT: Nút bấm ---
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); // Sửa
 
-        // common font for buttons
-        Font buttonFont = new Font("Arial", Font.BOLD, 28);
-        g.setFont(buttonFont);
+        // (Vẽ các nút)
+        g.setColor(Color.GREEN.darker());
+        g2d.fill(level1Button);
+        g.setColor(Color.WHITE);
+        g.drawString("LEVEL 1 (Làm quen - Yếu)", level1Button.x + 30, level1Button.y + 32);
 
-        // draw buttons (fill -> border -> text centered)
-        drawButton(g2d, level1Button, Color.GREEN, Color.BLACK, "LEVEL 1", buttonFont);
-        drawButton(g2d, level2Button, Color.YELLOW, Color.BLACK, "LEVEL 2", buttonFont);
-        drawButton(g2d, level3Button, Color.RED, Color.BLACK, "LEVEL 3", buttonFont);
-        drawButton(g2d, backButton, Color.DARK_GRAY, Color.WHITE, "QUAY LẠI", buttonFont);
-    }
+        g.setColor(Color.YELLOW.darker());
+        g2d.fill(level2Button);
+        g.setColor(Color.BLACK);
+        g.drawString("LEVEL 2 (Trung bình - Mạnh)", level2Button.x + 20, level2Button.y + 32);
 
-    // Helper: draw rectangle button with centered text
-    private void drawButton(Graphics2D g2d, Rectangle rect, Color fillColor, Color textColor, String text, Font font) {
-        // fill
-        g2d.setColor(fillColor);
-        g2d.fillRect(rect.x, rect.y, rect.width, rect.height);
+        g.setColor(Color.RED.darker());
+        g2d.fill(level3Button);
+        g.setColor(Color.WHITE);
+        g.drawString("LEVEL 3 (Khó - Unbreakable)", level3Button.x + 20, level3Button.y + 32);
 
-        // border
-        g2d.setColor(Color.BLACK);
-        g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
+        g.setColor(Color.MAGENTA.darker());
+        g2d.fill(level4Button);
+        g.setColor(Color.WHITE);
+        g.drawString("LEVEL 4 (Siêu khó)", level4Button.x + 80, level4Button.y + 32);
 
-        // text centered
-        drawCenteredString(g2d, text, rect, font, textColor);
-    }
+        g.setColor(Color.BLUE.darker());
+        g2d.fill(level5Button);
+        g.setColor(Color.WHITE);
+        g.drawString("LEVEL 5 (Tối đa)", level5Button.x + 90, level5Button.y + 32);
 
-    // Center text horizontally and vertically inside rect
-    private void drawCenteredString(Graphics g, String text, Rectangle rect, Font font, Color textColor) {
-        Font prev = g.getFont();
-        g.setFont(font);
-        FontMetrics fm = g.getFontMetrics(font);
-        int textWidth = fm.stringWidth(text);
-        int textHeight = fm.getHeight();
-
-        int x = rect.x + (rect.width - textWidth) / 2;
-        // Baseline y: top of rect + (available height - textHeight)/2 + ascent
-        int y = rect.y + (rect.height - textHeight) / 2 + fm.getAscent();
-
-        g.setColor(textColor);
-        g.drawString(text, x, y);
-        g.setFont(prev);
+        g.setColor(Color.GRAY.darker());
+        g2d.fill(backButton);
+        g.setColor(Color.WHITE);
+        g.drawString("QUAY LẠI", backButton.x + 105, backButton.y + 32);
     }
 
     @Override
@@ -84,14 +71,30 @@ public class LevelSelectionMenu extends MouseAdapter {
         int mx = e.getX();
         int my = e.getY();
 
+        boolean clicked = false;
+
         if (level1Button.contains(mx, my)) {
             gameLoop.startLevel(1);
+            clicked = true;
         } else if (level2Button.contains(mx, my)) {
             gameLoop.startLevel(2);
+            clicked = true;
         } else if (level3Button.contains(mx, my)) {
             gameLoop.startLevel(3);
+            clicked = true;
+        } else if (level4Button.contains(mx, my)) {
+            gameLoop.startLevel(4);
+            clicked = true;
+        } else if (level5Button.contains(mx, my)) {
+            gameLoop.startLevel(5);
+            clicked = true;
         } else if (backButton.contains(mx, my)) {
             gameLoop.setGameState(GameState.MENU);
+            clicked = true;
+        }
+
+        if (clicked) {
+            gameLoop.getSoundManager().play("ClickSound");
         }
     }
 }
