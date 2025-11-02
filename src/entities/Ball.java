@@ -33,8 +33,10 @@ public class Ball {
         this.dy = dy;
     }
 
-    // đổi màu bóng
     public void setColor(Color color) {
         this.color = color;
+    }
+    public Color getColor() {
+        return this.color;
     }
 }
