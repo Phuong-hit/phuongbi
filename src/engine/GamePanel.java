@@ -99,7 +99,7 @@ public class GamePanel extends JPanel {
         // Listener click chuột
         gameMouseListener = new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 GameState state = loop.getCurrentState();
 
                 if (state == GameState.IN_GAME) {
@@ -171,15 +171,13 @@ public class GamePanel extends JPanel {
 
     // Bắt đầu Game
     public void startGame(int levelNumber) {
-        this.currentLevel = levelNumber;
+        this.currentLevel = levelNumber; //lưu cur LV để phục vụ cho việc chơi lại hoặc LV tiếp
         paddle = new Paddle(WIDTH / 2 - 50, HEIGHT - 50, BASE_PADDLE_WIDTH, 10, Color.WHITE);
-        balls.clear();
+        balls.clear(); //xóa những quả bóng cũ của LV trc
         balls.add(new Ball(paddle.x + paddle.width / 2 - 10, paddle.y - 20, 20, Color.WHITE)); // Bóng trắng
-
-        level = LevelFactory.getLevel(levelNumber);
-
-        powerUps.clear();
-        score = 0;
+        level = LevelFactory.getLevel(levelNumber);  //Chọn LV
+        powerUps.clear(); //xóa Pwups của lv trc
+        score = 0; //reset điểm
         gameOver = false;
         gameWon = false;
         ballStuck = true;
@@ -187,7 +185,7 @@ public class GamePanel extends JPanel {
         isFireBall = false;
         isStrongBall = false;
         extendCount = 0;
-        powerUpTimer = 0; // Reset timer
+        powerUpTimer = 0;
     }
 
     // Reset khi mất mạng
@@ -205,25 +203,27 @@ public class GamePanel extends JPanel {
         powerUps.clear();
     }
 
-    // Tắt PowerUp
+    //Tắt PowerUp
     private void deactivatePowerUps() {
         System.out.println("PowerUp hết thời gian!");
-        paddle.width = BASE_PADDLE_WIDTH;
+        paddle.width = BASE_PADDLE_WIDTH; //reset độ mở rộng của Paddle
 
         isFireBall = false;
         isStrongBall = false;
         for (Ball b : balls) {
-            b.setColor(Color.WHITE); // Reset về màu trắng
+            b.setColor(Color.WHITE); // Reset về Ball màu trắng
         }
 
         extendCount = 0;
-        powerUpTimer = 0; // Tắt timer
+        powerUpTimer = 0;
     }
 
 
     // Vòng lặp cập nhật Game
     public void updateGame() {
-        if (gameOver || gameWon) return;
+        if (gameOver || gameWon) {
+            return;
+        }
 
         if (powerUpTimer > 0 && System.currentTimeMillis() - powerUpTimer > POWERUP_DURATION) {
             deactivatePowerUps();
@@ -341,18 +341,19 @@ public class GamePanel extends JPanel {
         }
 
         // PowerUps
-        Iterator<PowerUp> it = powerUps.iterator();
+        Iterator<PowerUp> it = powerUps.iterator(); //list chứa tất cả cá vâtj phẩm powerup đang rơi
         while (it.hasNext()) {
             PowerUp p = it.next();
-            p.move();
-            if (p.getRect().intersects(paddle.getRect())) {
-                activatePowerUp(p.type);
+            p.move(); //powerups rơi
+            if (p.getRect().intersects(paddle.getRect())) { //nếu có va chạm -> ăn vật phẩm
+                activatePowerUp(p.type); // gọi hàm kích hoạt powerups
                 it.remove();
             } else if (p.y > HEIGHT) {
                 it.remove();
             }
         }
     }
+
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
