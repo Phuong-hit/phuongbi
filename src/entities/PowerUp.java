@@ -25,11 +25,8 @@ public class PowerUp {
     public void move() { y += dy; }
 
     public void draw(Graphics g) {
-        // 1. Vẽ vòng tròn màu nền
         g.setColor(color);
         g.fillOval(x, y, size, size);
-
-        // --- SỬA FONT: Chữ trên PowerUp ---
         g.setColor(Color.BLACK);
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10)); // Sửa
 

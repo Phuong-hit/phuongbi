@@ -6,40 +6,39 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import utils.ImageLoader;
+import utils.ImageLoader; // (Cần file ImageLoader.java)
 
 public class MainMenu extends MouseAdapter {
 
     private final GameLoop gameLoop;
-    private final BufferedImage background;
+    private final BufferedImage background; // Biến để giữ ảnh nền
+
+    // Vị trí các nút
     private final Rectangle levelButton = new Rectangle(300, 200, 200, 50);
     private final Rectangle settingButton = new Rectangle(300, 270, 200, 50);
     private final Rectangle exitButton = new Rectangle(300, 340, 200, 50);
 
-    private static final String BACKGROUND_PATH = "/images/background.png"; // Cập nhật đường dẫn nếu cần
+    // --- SỬA LỖI: Cập nhật đường dẫn chính xác theo ảnh của bạn ---
+    // (Đường dẫn phải khớp 100% chữ hoa/thường)
+    private static final String BACKGROUND_PATH = "/Graphics/AnhNen.png";
 
     public MainMenu(GameLoop gameLoop) {
         this.gameLoop = gameLoop;
+
+        // Tải hình nền
         this.background = ImageLoader.loadImage(BACKGROUND_PATH);
     }
 
     public void render(Graphics g) {
+        // 1. Vẽ hình nền
         if (background != null) {
             g.drawImage(background, 0, 0, 800, 600, null);
-        } else {
-            g.setColor(new Color(20, 20, 40));
-            g.fillRect(0, 0, 800, 600);
-            g.setColor(Color.RED);
-            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14)); // Sửa
-            g.drawString("KHÔNG TẢI ĐƯỢC HÌNH NỀN!", 250, 150);
-            g.drawString("Kiểm tra đường dẫn: " + BACKGROUND_PATH, 230, 170);
         }
 
         Graphics2D g2d = (Graphics2D) g;
-        g.setColor(Color.YELLOW);
-        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50)); // Sửa
-        g.drawString("BRICK BREAKER", 200, 100);
-        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20)); // Sửa
+
+        // 3. Vẽ các nút
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 
         // Nút Level
         g.setColor(Color.BLUE);
@@ -47,13 +46,13 @@ public class MainMenu extends MouseAdapter {
         g.setColor(Color.WHITE);
         g.drawString("CHỌN LEVEL", levelButton.x + 35, levelButton.y + 33);
 
-        // Nút Setting
+        // nút setting
         g.setColor(Color.ORANGE);
         g2d.fill(settingButton);
         g.setColor(Color.WHITE);
         g.drawString("CÀI ĐẶT", settingButton.x + 55, settingButton.y + 33);
 
-        // Nút Exit
+        // nút exit
         g.setColor(Color.RED);
         g2d.fill(exitButton);
         g.setColor(Color.WHITE);

@@ -376,7 +376,7 @@ public class GamePanel extends JPanel {
                 g.drawString("POWER UP: " + timeRemaining + "s", WIDTH - 150, 30);
             }
 
-            // Vẽ nút setting
+            // vẽ nút setting
             if (loop.getCurrentState() == GameState.IN_GAME && !gameWon && !gameOver) {
                 drawSettingsCog(g);
             }
