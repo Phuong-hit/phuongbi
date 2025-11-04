@@ -11,12 +11,8 @@ import utils.ImageLoader; // (Import)
 public class LevelSelectionMenu extends MouseAdapter {
 
     private GameLoop gameLoop;
-
-    // --- THÊM: Biến giữ ảnh nền ---
     private final BufferedImage background;
-    // Đường dẫn chính xác đến file ảnh của bạn
     private static final String BACKGROUND_PATH = "/Graphics/AnhNen.png";
-    // ----------------------------
 
     // vị trí các nút
     private Rectangle level1Button = new Rectangle(250, 150, 300, 50);

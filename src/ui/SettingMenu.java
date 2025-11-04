@@ -13,7 +13,6 @@ public class SettingMenu extends MouseAdapter {
     private GameLoop gameLoop;
 
     private final BufferedImage background;
-    // Đường dẫn chính xác đến file ảnh của bạn
     private static final String BACKGROUND_PATH = "/Graphics/AnhNen.png";
 
     private Rectangle soundButton = new Rectangle(250, 200, 300, 50);
@@ -21,25 +20,16 @@ public class SettingMenu extends MouseAdapter {
 
     public SettingMenu(GameLoop gameLoop) {
         this.gameLoop = gameLoop;
-        // --- THÊM: Tải ảnh nền khi khởi tạo ---
         this.background = ImageLoader.loadImage(BACKGROUND_PATH);
     }
 
-    // --- KHÔI PHỤC: Logic vẽ (render) ---
     public void render(Graphics g) {
-        // 1. Vẽ ảnh nền
+        // 1. vẽ ảnh nền
         if (background != null) {
             g.drawImage(background, 0, 0, 800, 600, null);
-        } else {
-            // Nếu tải thất bại, vẽ nền tối và báo lỗi
-            /*g.setColor(new Color(50, 50, 50));
-            g.fillRect(0, 0, 800, 600);
-            g.setColor(Color.RED);
-            g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
-            g.drawString("KHÔNG TẢI ĐƯỢC HÌNH NỀN!", 250, 100);*/
         }
 
-        // 2. Vẽ Tiêu đề
+        // 2. vẽ Tiêu đề
         g.setColor(Color.WHITE);
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 40)); // Font an toàn
         g.drawString("CÀI ĐẶT TRÒ CHƠI", 220, 100);

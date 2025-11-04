@@ -136,7 +136,7 @@ public class GamePanel extends JPanel {
                         }
                     }
                 }
-                // Xử lý click khi PAUSE
+                // Xử lý click khi pause
                 else if (state == GameState.PAUSE) {
                     if (pauseResumeButton.contains(e.getPoint())) {
                         loop.getSoundManager().play("ClickSound");
@@ -234,7 +234,7 @@ public class GamePanel extends JPanel {
         if (ballStuck) {
             if (!balls.isEmpty()) {
                 Ball mainBall = balls.get(0);
-                // Cập nhật vị trí bóng DÍNH theo Paddle
+                // cập nhật vị trí bóng theo Paddle
                 mainBall.x = paddle.x + paddle.width / 2 - mainBall.size / 2;
                 mainBall.y = paddle.y - mainBall.size;
             }

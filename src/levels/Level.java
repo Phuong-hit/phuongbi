@@ -4,37 +4,33 @@ import entities.Brick;
 import java.awt.*;
 import java.util.ArrayList;
 
-/**
- * Lớp cơ sở (abstract) cho tất cả các level.
- */
+ // Lớp cơ sở (abstract) cho tất cả các level.
 public abstract class Level {
 
     public ArrayList<Brick> bricks = new ArrayList<>();
 
-    // Cung cấp các hằng số chung cho các lớp con
+    // kích thước gạch
     protected final int brickWidth = 70;
     protected final int brickHeight = 20;
 
-    /**
-     * Constructor này đc gọi bởi các lớp con
-     * Để gọi createLevel() để xây dựng các LV
-     */
+    // tạo LV
     public Level() {
         createLevel();
     }
 
     protected abstract void createLevel();
 
-    // Phương thức vẽ gạch
+    // vẽ gạch
     public void draw(Graphics g) {
         for (Brick b : bricks) b.draw(g);
     }
 
-    // Phương thức đếm số gạch còn lại
+    // đếm số gạch còn lại
     public int getRemainingBricks() {
         int count = 0;
         for (Brick b : bricks)
-            if (!b.destroyed && !b.isUnbreakable()) count++;
+            if (!b.destroyed && !b.isUnbreakable()) count++;  //đếm gach chua bị phá và
+                                                              // gạch k phải gạch k thể phá
         return count;
     }
 }

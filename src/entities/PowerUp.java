@@ -3,12 +3,14 @@ package entities;
 import java.awt.*;
 import java.util.Random;
 
+// constructor
 public class PowerUp {
     public int x, y, size = 20;
     public int dy = 2;
     public String type;
     private Color color;
 
+    // khi nhặt đc powerup sẽ đổi màu tương ứng
     public PowerUp(int x, int y, String type) {
         this.x = x; this.y = y;
         this.type = type;
@@ -22,13 +24,15 @@ public class PowerUp {
         }
     }
 
+    //di chuyển
     public void move() { y += dy; }
 
+    // vẽ
     public void draw(Graphics g) {
         g.setColor(color);
         g.fillOval(x, y, size, size);
         g.setColor(Color.BLACK);
-        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10)); // Sửa
+        g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
 
         String text = "";
         int offsetX = 0;
@@ -64,6 +68,7 @@ public class PowerUp {
         return new Rectangle(x, y, size, size);
     }
 
+    // pha vỡ gạch tỉ lệ rơi powerup là 9%
     public static PowerUp maybeDrop(int x, int y) {
         if (new Random().nextDouble() < 0.09) {
             String[] types = {"MULTI_BALL", "FIRE_BALL", "EXTEND_PADDLE", "STRONG_BALL", "ADD_LIFE"};

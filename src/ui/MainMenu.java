@@ -11,36 +11,33 @@ import utils.ImageLoader; // (Cần file ImageLoader.java)
 public class MainMenu extends MouseAdapter {
 
     private final GameLoop gameLoop;
-    private final BufferedImage background; // Biến để giữ ảnh nền
+    private final BufferedImage background; // biến để giữ ảnh nền
 
-    // Vị trí các nút
+    // vị trí các nút
     private final Rectangle levelButton = new Rectangle(300, 200, 200, 50);
     private final Rectangle settingButton = new Rectangle(300, 270, 200, 50);
     private final Rectangle exitButton = new Rectangle(300, 340, 200, 50);
-
-    // --- SỬA LỖI: Cập nhật đường dẫn chính xác theo ảnh của bạn ---
-    // (Đường dẫn phải khớp 100% chữ hoa/thường)
     private static final String BACKGROUND_PATH = "/Graphics/AnhNen.png";
 
     public MainMenu(GameLoop gameLoop) {
         this.gameLoop = gameLoop;
 
-        // Tải hình nền
+        // tải hình nền
         this.background = ImageLoader.loadImage(BACKGROUND_PATH);
     }
 
     public void render(Graphics g) {
-        // 1. Vẽ hình nền
+        // 1. vẽ hình nền
         if (background != null) {
             g.drawImage(background, 0, 0, 800, 600, null);
         }
 
         Graphics2D g2d = (Graphics2D) g;
 
-        // 3. Vẽ các nút
+        // 3. vẽ các nút
         g.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
 
-        // Nút Level
+        // nút Lv
         g.setColor(Color.BLUE);
         g2d.fill(levelButton);
         g.setColor(Color.WHITE);

@@ -7,9 +7,10 @@ public class Level2 extends Level {
 
     @Override
     protected void createLevel() {
-        int cols = 10, rows = 5;
+        int cols = 10, rows = 5; //10 cột 5 hàng
         int startX = 50, startY = 50;
 
+        //tạo map
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 int x = startX + c * brickWidth;

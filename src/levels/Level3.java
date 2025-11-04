@@ -8,10 +8,7 @@ public class Level3 extends Level {
 
     @Override
     protected void createLevel() {
-        int cols = 9; // Giảm tổng số cột xuống còn 9
-        int rows = 5;
-
-        // Căn giữa 9 cột ( (800 - 9*70) / 2 = 85 )
+        int cols = 9, rows = 5; //9 hàng 5 cột
         int startX = 85;
         int startY = 50;
 
@@ -30,12 +27,12 @@ public class Level3 extends Level {
                 }
                 // 3. Hàng r=1 và r=3
                 else if (r == 1 || r == 3) {
-                    if (c == 0 || c == 8) { // Bỏ cột đầu và cột cuối
+                    if (c == 0 || c == 8) {
                         continue;
                     }
                     bricks.add(new WeakBrick(x, y, brickWidth, brickHeight));
                 }
-                // 4. Hàng r=2 (Hàng giữa - Bỏ 2 cột rìa mỗi bên -> còn 5 gạch)
+                // 4. Hàng r=2
                 else if (r == 2) {
                     if (c < 2 || c > 6) { // Bỏ 2 cột đầu và 2 cột cuối
                         continue;

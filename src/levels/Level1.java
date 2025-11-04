@@ -4,10 +4,9 @@ import entities.WeakBrick;
 
 public class Level1 extends Level {
 
-    // Đây là phương thức duy nhất cần triển khai
     @Override
     protected void createLevel() {
-        int cols = 10, rows = 4;
+        int cols = 10, rows = 4;  // tạo 10 cột 4 hàng
         int startX = 50, startY = 50;
 
         for (int r = 0; r < rows; r++) {
